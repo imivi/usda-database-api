@@ -4,3 +4,7 @@ Scripts
 __pycache__
 database/db.sqlite3
 .env
+typesense_data/db
+typesense_data/meta
+typesense_data/models
+typesense_data/state

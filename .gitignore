@@ -6,3 +6,10 @@ Scripts
 .env
 __pycache__
 database/db.sqlite3
+docker-compose.redis.yml
+docker-compose.typesense.yml
+docker-compose.fastapi.yml
+typesense_data/db
+typesense_data/meta
+typesense_data/models
+typesense_data/state

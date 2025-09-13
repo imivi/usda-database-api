@@ -45,3 +45,11 @@ def create_food_from_dict(data: dict) -> Food:
         data_type=data["data_type"],
         nutrients=[FoodNutrientMinimal(**values) for values in data["nutrients"]],
     )
+
+
+
+@dataclass
+class TypesenseFood:
+    food_id: int
+    food_name: str
+

@@ -1,8 +1,11 @@
 import sqlite3
 from typing import Any
+import typing
 
-from models import Food, FoodNutrient, FoodNutrientMinimal
+from models import Food, FoodNutrient, FoodNutrientMinimal, TypesenseFood
 import utils
+
+
 
 
 def strip_nutrient_food_data(nutrient: FoodNutrient) -> FoodNutrientMinimal:
@@ -27,6 +30,15 @@ def convert_food_nutrients_to_food(nutrients: list[FoodNutrient]) -> Food:
     )
 
 
+def get_foods_by_id(db_conn: sqlite3.Connection, food_ids: list[int]) -> list[Food]:
+    foods: list[Food] = []
+    for food_id in food_ids:
+        food = get_food(db_conn, typing.cast(int, food_id))
+        if food is not None:
+            foods.append(food)
+    return foods
+
+
 def get_food(db_conn: sqlite3.Connection, food_id: int) -> Food | None:
     nutrients = get_food_nutrients(db_conn, food_id)
 
@@ -36,9 +48,30 @@ def get_food(db_conn: sqlite3.Connection, food_id: int) -> Food | None:
     return convert_food_nutrients_to_food(nutrients)
 
 
-def get_food_nutrients(db_conn: sqlite3.Connection, food_id: int) -> list[FoodNutrient]:
+def get_food_names(db_conn: sqlite3.Connection, limit: int, after: int) -> list[TypesenseFood]:
+    """Get only the food id and description. This is used to seed Typesense."""
 
-    # print("Getting food nutrients:", food_id)
+    sql_query = f"""
+        SELECT
+            fdc_id AS food_id,
+            description AS food_name
+        FROM food
+        WHERE fdc_id > {after}
+        ORDER BY fdc_id
+        LIMIT {limit}
+    """
+
+    rows = db_conn.execute(sql_query).fetchall()
+
+    columns = ["food_id", "food_name"]
+
+    foods = [TypesenseFood(**dict(zip(columns, values))) for values in rows]
+
+    return foods
+
+
+
+def get_food_nutrients(db_conn: sqlite3.Connection, food_id: int) -> list[FoodNutrient]:
 
     sql_query = """
         SELECT

@@ -1,25 +1,40 @@
 from fastapi import FastAPI, HTTPException
-import food_service
 import sqlite3
+import json
+import typing
+
 from env import env
 import utils
 import models
-import json
+import food_service
+from typesense_client import create_typesense_client
+import typesense_service
 
 
 # Initialize Fastapi
 app = FastAPI()
 
 # Connect to SQLite database
-db_conn = sqlite3.connect("database/db.sqlite3")
+db_conn = sqlite3.connect("database/db.sqlite3", check_same_thread=False)
 
 # Create Redis client if required
 redis_client = utils.create_redis_client(env.REDIS_HOST, env.REDIS_PORT)
+
+# Create typesense client
+typesense_client = create_typesense_client()
 
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to the unofficial USDA Database API"}
+
+
+@app.get("/search/{food_name}")
+def search_foods(food_name:str):
+    results = typesense_service.search_foods(typesense_client, food_name,10)
+    food_ids = [res["document"]["food_id"] for res in results]
+    foods = food_service.get_foods_by_id(db_conn, typing.cast(list[int],food_ids))
+    return foods
 
 
 @app.get("/foods")
@@ -42,10 +57,13 @@ async def get_food_by_id(food_id: int):
 
             # Cache hit
             if cached_food_json is not None:
+                print("Cache hit")
                 food = models.create_food_from_dict(json.loads(cached_food_json))
                 return food
 
             # Else, cache miss
+            else:
+                print("Cache miss")
 
         except Exception as error:
             print(error)
@@ -53,6 +71,9 @@ async def get_food_by_id(food_id: int):
                 status_code=500,
                 detail="Error reading from Redis cache",
             )
+        
+    else:
+        print("No redis cache")
 
     food = food_service.get_food(db_conn, food_id)
     if food is not None and redis_client is not None:

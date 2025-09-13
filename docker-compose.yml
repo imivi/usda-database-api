@@ -10,9 +10,17 @@ services:
     restart: unless-stopped
     volumes:
       - ./database:/app/database # Change db location as needed
+
     environment:
-      INIT_DB: true # Optional
-      SEED_DB: true # Optional
+      INIT_DB: false # Optional, default: true
+      SEED_DB: false # Optional, default: true
+      
+      SEED_TYPESENSE: false # Optional, default: true
+      TYPESENSE_API_KEY: secretkey
+      TYPESENSE_HOST: typesense
+      TYPESENSE_PORT: 8108
+      TYPESENSE_PROTOCOL: http
+      
       # Optionally define a redis server.
       # Note that with docker we have to use the name
       # of the container instead of "localhost".
