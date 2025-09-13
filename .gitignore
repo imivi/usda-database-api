@@ -1,0 +1,8 @@
+datasets/**/*.csv
+untracked
+Include
+Lib
+Scripts
+.env
+__pycache__
+database/db.sqlite3

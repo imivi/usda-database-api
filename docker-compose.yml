@@ -1,0 +1,25 @@
+services:
+
+  api:
+    build:
+      context: .
+    depends_on:
+      - redis
+    ports:
+      - 8000:8000
+    restart: unless-stopped
+    volumes:
+      - ./database:/app/database # Change db location as needed
+    environment:
+      # Optionally define a redis server.
+      # Note that with docker we have to use the name
+      # of the container instead of "localhost".
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+
+  redis:
+    # Redis runs on port 6379
+    image: redis:8.2.1-alpine
+    ports:
+      - 6379:6379

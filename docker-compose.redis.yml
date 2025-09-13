@@ -1,0 +1,7 @@
+services:
+
+  redis:
+    # Redis runs on port 6379
+    image: redis:8.2.1-alpine
+    ports:
+      - 6379:6379
