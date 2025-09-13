@@ -1,5 +1,6 @@
 import os
 import sqlite3
+from env import env
 
 import pandas as pd
 
@@ -98,12 +99,18 @@ def main():
     with sqlite3.connect("database/db.sqlite3") as db_conn:
 
         # Create tables if they don't exist yet
-        initialize_db(db_conn)
+        if env.INIT_DB:
+            initialize_db(db_conn)
+            print('✅ Database initialized')
 
-        for i, csv_path in enumerate(get_csv_paths("datasets")):
-            table_name = get_csv_table(csv_path)
-            print(i + 1, "load_csv_into_table:", csv_path, "-->", table_name)
-            load_csv_into_table(db_conn, csv_path, table_name)
+        # Read CSVs and insert rows into database
+        if env.SEED_DB:
+            for i, csv_path in enumerate(get_csv_paths("datasets")):
+                table_name = get_csv_table(csv_path)
+                print(i + 1, "CSV inserted into table:", csv_path, "-->", table_name)
+                load_csv_into_table(db_conn, csv_path, table_name)
+            print('✅ Database seeded')
+
 
 
 if __name__ == "__main__":

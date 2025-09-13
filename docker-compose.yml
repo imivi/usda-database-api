@@ -11,6 +11,8 @@ services:
     volumes:
       - ./database:/app/database # Change db location as needed
     environment:
+      INIT_DB: true # Optional
+      SEED_DB: true # Optional
       # Optionally define a redis server.
       # Note that with docker we have to use the name
       # of the container instead of "localhost".

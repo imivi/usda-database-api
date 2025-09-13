@@ -3,6 +3,8 @@ from typing import Optional
 
 
 class EnvSchema(BaseSettings):
+    INIT_DB: Optional[bool] = True
+    SEED_DB: Optional[bool] = True
     REDIS_HOST: Optional[str] = None
     REDIS_PORT: Optional[int] = 6379
 

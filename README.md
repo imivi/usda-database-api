@@ -37,6 +37,18 @@ datasets/
 
 Run `docker compose up`. This will run a Redis server; then the API will initialize and seed the SQLite database by reading from the datasets; finally the API will serve the food nutrient data via the HTTP endpoints listed below.
 
+## Configuration
+
+In the docker compose file you can configure the Redis host and port, as well as toggle the database intialization and seeding:
+
+```yml
+environment:
+    INIT_DB: true # Optional
+    SEED_DB: true # Optional
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+```
+
 ## 🌐 API endpoints
 
 | Method | Endpoint | Returned value |
