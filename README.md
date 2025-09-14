@@ -35,7 +35,7 @@ datasets/
     └── nutrient.csv
 ```
 
-Run `docker compose up`. This will run a Redis server; then the API will initialize and seed the SQLite database by reading from the datasets; finally the API will serve the food nutrient data via the HTTP endpoints listed below.
+Run `docker compose up`. This will run a Redis server; run a [Typesense](https://typesense.org/) server for fuzzy text search; then the API will initialize and seed the SQLite database by reading from the datasets; finally the API will serve the food nutrient data via the HTTP endpoints listed below.
 
 ## Configuration
 
@@ -47,14 +47,19 @@ environment:
     SEED_DB: true # Optional
     REDIS_HOST: redis
     REDIS_PORT: 6379
+    TYPESENSE_API_KEY: secretkey
+    TYPESENSE_HOST: typesense
+    TYPESENSE_PORT: 8108
+    TYPESENSE_PROTOCOL: http
 ```
 
 ## 🌐 API endpoints
 
-| Method | Endpoint | Returned value |
-| -      | -        | -              |
-| GET    | `/foods/:food_id` | Food |
-| GET    | `/foods?limit=<int>&after=<food_id>` | list[Food] |
+| HTTP Method | Endpoint | Return type | Note |
+| -      | -        | -              | - |
+| GET    | `/foods/:food_id` | Food | Find food by ID (integer) |
+| GET    | `/foods?limit=<int>&after=<food_id>` | list[Food] | Find multiple foods with keyset pagination |
+| GET    | `/search/:food_name` | list[Food] | Search foods by name, returning the best matches. Uses Typesense |
 
 ```py
 Food = {

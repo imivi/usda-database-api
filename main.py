@@ -8,6 +8,7 @@ import utils
 import models
 import food_service
 from typesense_client import create_typesense_client
+from seed_typesense import seed_typesense
 import typesense_service
 
 
@@ -22,6 +23,11 @@ redis_client = utils.create_redis_client(env.REDIS_HOST, env.REDIS_PORT)
 
 # Create typesense client
 typesense_client = create_typesense_client()
+
+
+if env.SEED_TYPESENSE:
+    print("Seeding Typesense...")
+    seed_typesense(typesense_client)
 
 
 @app.get("/")
