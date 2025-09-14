@@ -5,11 +5,12 @@ services:
       context: .
     depends_on:
       - redis
+      - typesense
     ports:
       - 8000:8000
     restart: unless-stopped
     volumes:
-      - ./database:/app/database # Change db location as needed
+      - ./database:/app/database # Change DB location as needed
 
     environment:
       INIT_DB: false # Optional, default: true
@@ -33,3 +34,14 @@ services:
     image: redis:8.2.1-alpine
     ports:
       - 6379:6379
+    volumes:
+      - ./redis_data:/data # Change Redis data location as needed
+
+  typesense:
+    image: typesense/typesense:28.0
+    restart: unless-stopped
+    entrypoint: sh -c "/opt/typesense-server --data-dir /data --api-key=secretkey --enable-cors"
+    ports:
+      - 8108:8108
+    volumes:
+      - ./typesense_data:/data

@@ -72,8 +72,7 @@ async def get_food_by_id(food_id: int):
                 detail="Error reading from Redis cache",
             )
         
-    else:
-        print("No redis cache")
+    # Else, no Redis cache available
 
     food = food_service.get_food(db_conn, food_id)
     if food is not None and redis_client is not None:

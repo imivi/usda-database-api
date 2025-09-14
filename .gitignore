@@ -13,3 +13,4 @@ typesense_data/db
 typesense_data/meta
 typesense_data/models
 typesense_data/state
+redis_data/*.rdb
